@@ -144,10 +144,11 @@ input[type=range]{accent-color:var(--laranja);width:110px}
         <div class="lin"><label>ATIVIDADE</label><input class="txt" id="iRot" maxlength="40" placeholder="Nome da atividade (opcional)"></div>
         <div class="lin"><label>ALARME</label>
           <label class="sw"><input type="checkbox" id="kSom" checked> Tocar ao zerar</label>
-          <select class="sel" id="sTom"><option value="sino">Sino</option><option value="gongo">Gongo</option><option value="digital">Digital</option></select></div>
+          <select class="sel" id="sTom" aria-label="Som ao zerar"><option value="sino">Sino</option><option value="carrilhao">Carrilhão</option><option value="gongo">Gongo</option><option value="tigela">Tigela</option><option value="bipe">Bipe suave</option><option value="madeira">Madeira</option><option value="digital">Digital</option></select></div>
         <div class="lin"><label>VOLUME</label><input type="range" id="rVol" min="0" max="100" value="70"> <button class="chip" id="bTeste">Testar</button></div>
         <div class="lin"><label>AVISOS</label>
-          <label class="sw"><input type="checkbox" id="kAv" checked> Sinal aos 5 min e 1 min finais</label></div>
+          <label class="sw"><input type="checkbox" id="kAv" checked> Sinal aos 5 min e 1 min finais</label>
+          <select class="sel" id="sAv" aria-label="Som dos avisos"><option value="toque">Toque curto</option><option value="bipe">Bipe suave</option><option value="madeira">Madeira</option><option value="sino">Sino</option><option value="tigela">Tigela</option><option value="digital">Digital</option></select></div>
         <div class="lin"><label>AO ZERAR</label>
           <label class="sw"><input type="checkbox" id="kExtra" checked> Seguir contando o tempo excedido</label></div>
         <p class="dica">Atalhos: Espaço inicia e pausa · R reinicia · ↑ ↓ ajustam 1 min.</p>
@@ -175,15 +176,16 @@ input[type=range]{accent-color:var(--laranja);width:110px}
 <script>
 (function(){
 "use strict";
-var $=function(i){return document.getElementById(i)};
+var C={};var $=function(i){return C[i]||(C[i]=document.getElementById(i))};
+(function(){var l=document.querySelectorAll("[id]");for(var k=0;k<l.length;k++)C[l[k].id]=l[k]})();
 var tm=$("tm"),dig=$("dig"),prog=$("prog"),pg=$("pg"),palco=$("palco"),vazio=$("vazio");
 var S={total:600,rest:600000,run:false,end:0,done:false,
-  som:true,tom:"sino",vol:.7,av:true,extra:true,rot:"",a5:false,a1:false};
+  som:true,tom:"sino",tomAv:"toque",vol:.7,av:true,extra:true,rot:"",a5:false,a1:false};
 var KEY="timer-terentim-v1";
 try{var j=JSON.parse(localStorage.getItem(KEY)||"{}");
-  ["total","som","tom","vol","av","extra","rot"].forEach(function(k){if(j[k]!==undefined)S[k]=j[k]});
+  ["total","som","tom","tomAv","vol","av","extra","rot"].forEach(function(k){if(j[k]!==undefined)S[k]=j[k]});
   S.rest=S.total*1000;}catch(e){}
-function salva(){try{localStorage.setItem(KEY,JSON.stringify({total:S.total,som:S.som,tom:S.tom,vol:S.vol,av:S.av,extra:S.extra,rot:S.rot}))}catch(e){}}
+function salva(){try{localStorage.setItem(KEY,JSON.stringify({total:S.total,som:S.som,tom:S.tom,tomAv:S.tomAv,vol:S.vol,av:S.av,extra:S.extra,rot:S.rot}))}catch(e){}}
 
 /* ---------- relógio num Worker (não sofre estrangulamento em aba oculta) ---------- */
 var worker=null;
@@ -213,7 +215,8 @@ function render(){
   var cl=ms<=0&&S.done?"fim":(seg<=60&&S.total>60?"final":(seg<=300&&S.total>300?"atencao":""));
   tm.className="tm "+cl;
   var go=$("bGo");
-  go.querySelector("span").textContent=S.run?"Pausar":(S.done?"Reiniciar":(S.rest<S.total*1000?"Continuar":"Iniciar"));
+  go.querySelector("span").textContent=S.run?"Pausar":(S.done?"Reiniciar":"Iniciar");
+  go.setAttribute("aria-label",S.run?"Pausar":"Iniciar");
   go.querySelector("svg").innerHTML=S.run?'<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>':'<path d="M7 4l13 8-13 8z"/>';
   $("rotulo").textContent=S.rot||"";
   $("bSom").classList.toggle("on",S.som);
@@ -263,6 +266,14 @@ function toca(tom){
     nota(196,0,3.2,"sine",.6);nota(293.7,0,2.6,"sine",.3);nota(392.5,0,2,"triangle",.14);nota(98,0,3.4,"sine",.45)
   }else if(tom==="digital"){
     for(var i=0;i<4;i++)nota(1046.5,i*.22,.14,"square",.18)
+  }else if(tom==="carrilhao"){
+    sino(523.3,0);sino(659.3,.35);sino(784,.7);sino(1046.5,1.05)
+  }else if(tom==="tigela"){
+    nota(432,0,4.2,"sine",.5);nota(436,0,4.2,"sine",.3);nota(866,0,2.6,"sine",.12);nota(1298,0,1.4,"sine",.05)
+  }else if(tom==="bipe"){
+    nota(660,0,.28,"sine",.4);nota(660,.4,.28,"sine",.4)
+  }else if(tom==="madeira"){
+    for(var k=0;k<3;k++){nota(820,k*.2,.07,"triangle",.5);nota(1640,k*.2,.04,"sine",.2)}
   }else{
     sino(784,0);sino(988,.45);sino(1175,.9)
   }
@@ -273,7 +284,7 @@ function alarme(){
   var n=0;
   (function volta(){
     toca(S.tom);n++;
-    if(n<3)alarmeTimer=setTimeout(volta,S.tom==="gongo"?3600:2600);
+    if(n<3)alarmeTimer=setTimeout(volta,S.tom==="gongo"?3600:(S.tom==="tigela"?4400:2600));
     else alarmeTimer=null;
   })();
 }
@@ -281,6 +292,7 @@ function libera(){if(alarmeTimer){clearTimeout(alarmeTimer);alarmeTimer=null}}
 function sinal(n){
   if(!S.som&&!S.av)return;
   if(!audio())return;
+  if(S.tomAv&&S.tomAv!=="toque"){toca(S.tomAv);return}
   if(n===1){nota(880,0,.5,"sine",.4)}
   else{nota(880,0,.35,"sine",.45);nota(880,.45,.35,"sine",.45)}
 }
@@ -334,6 +346,7 @@ $("sTom").onchange=function(){S.tom=this.value;salva();toca(S.tom)};
 $("rVol").oninput=function(){S.vol=this.value/100;salva()};
 $("bTeste").onclick=function(){toca(S.tom)};
 $("kAv").onchange=function(){S.av=this.checked;salva()};
+$("sAv").onchange=function(){S.tomAv=this.value;salva();audio();sinal(1)};
 $("kExtra").onchange=function(){S.extra=this.checked;salva()};
 [1,2,3,5,10,15,20,25,30,45,60].forEach(function(m){
   var b=document.createElement("button");b.className="chip";b.textContent=m+" min";
@@ -341,7 +354,7 @@ $("kExtra").onchange=function(){S.extra=this.checked;salva()};
   $("chips").appendChild(b);
 });
 $("iMin").value=Math.floor(S.total/60);$("iSeg").value=S.total%60;
-$("iRot").value=S.rot||"";$("kSom").checked=S.som;$("sTom").value=S.tom;
+$("iRot").value=S.rot||"";$("kSom").checked=S.som;$("sTom").value=S.tom;$("sAv").value=S.tomAv||"toque";
 $("rVol").value=Math.round(S.vol*100);$("kAv").checked=S.av;$("kExtra").checked=S.extra;
 
 function atalho(e){
