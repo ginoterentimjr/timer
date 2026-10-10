@@ -51,6 +51,13 @@ button{cursor:pointer}
 .tm.final .digitos,.tm.fim .digitos{color:#fff}
 .digitos .mais{font-size:.5em;vertical-align:.5em;margin-right:.08em;opacity:.9}
 .digitos.pisca{animation:pisca 1s steps(1) infinite}
+.digitos{cursor:text;border-radius:10px;padding:0 .08em}
+.digitos:hover{background:rgba(251,238,229,.08)}
+.edita{display:flex;align-items:baseline;justify-content:center;font-weight:700;font-size:clamp(44px,min(25cqw,32cqh),150px);line-height:1;color:var(--creme);font-variant-numeric:tabular-nums}
+.edita[hidden]{display:none}
+.edita input{height:1.12em;box-sizing:border-box;font:inherit;color:inherit;background:rgba(251,238,229,.08);border:0;border-bottom:.05em solid var(--ouro);border-radius:.08em .08em 0 0;width:2.3ch;padding:0;margin:0;text-align:center;outline:0;font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.edita input:focus{background:rgba(251,238,229,.18);border-bottom-color:var(--laranja)}
+.edita span{padding:0 .04em}
 @keyframes pisca{50%{opacity:.35}}
 
 .barra{margin:0 14px;height:6px;border-radius:99px;background:rgba(251,238,229,.14);overflow:hidden}
@@ -126,7 +133,7 @@ input[type=range]{accent-color:var(--laranja);width:110px}
         <button class="ic" id="bPip" title="Janela flutuante" aria-label="Janela flutuante"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><rect x="11" y="10" width="8" height="6" rx="1" fill="currentColor"/></svg></button>
       </div>
       <div class="rotulo" id="rotulo"></div>
-      <div class="visor"><div class="digitos" id="dig">10:00</div></div>
+      <div class="visor"><div class="digitos" id="dig" title="Clique para digitar minutos e segundos">10:00</div><div class="edita" id="ed" hidden><input id="eMin" type="text" inputmode="numeric" maxlength="3" autocomplete="off" aria-label="Minutos"><span>:</span><input id="eSeg" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="Segundos"></div></div>
       <div class="barra"><i id="prog"></i></div>
       <div class="ctl">
         <button class="bt mn" id="bMenos" title="Menos 1 minuto">−1</button>
@@ -151,7 +158,7 @@ input[type=range]{accent-color:var(--laranja);width:110px}
           <select class="sel" id="sAv" aria-label="Som dos avisos"><option value="toque">Toque curto</option><option value="bipe">Bipe suave</option><option value="madeira">Madeira</option><option value="sino">Sino</option><option value="tigela">Tigela</option><option value="digital">Digital</option></select></div>
         <div class="lin"><label>AO ZERAR</label>
           <label class="sw"><input type="checkbox" id="kExtra" checked> Seguir contando o tempo excedido</label></div>
-        <p class="dica">Atalhos: Espaço inicia e pausa · R reinicia · ↑ ↓ ajustam 1 min.</p>
+        <p class="dica">Clique no tempo, ou digite um número, para informar minutos e segundos; Enter confirma, Esc cancela. Atalhos: Espaço inicia e pausa · R reinicia · ↑ ↓ ajustam 1 min.</p>
         <button class="bt pri ok" id="bOk">Pronto</button>
       </div>
     </div>
@@ -165,7 +172,7 @@ input[type=range]{accent-color:var(--laranja);width:110px}
     <button class="bt pri" id="bPip2"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="11" y="10" width="8" height="6" rx="1"/></svg>Abrir janela flutuante</button>
   </div>
   <div class="passos">
-    <div><b>1 · AJUSTE</b>Toque na engrenagem, defina minutos e segundos ou escolha um tempo pronto. Ligue ou desligue o alarme.</div>
+    <div><b>1 · AJUSTE</b>Clique no tempo e digite minutos e segundos, ou toque na engrenagem e escolha um tempo pronto. Ligue ou desligue o alarme.</div>
     <div><b>2 · FLUTUE</b>Clique em “Abrir janela flutuante”. Arraste a janelinha para o canto da tela e abra o PowerPoint.</div>
     <div><b>3 · CONDUZA</b>Inicie quando a atividade começar. Aos 5 min a cor esquenta, no último minuto a tela fica laranja.</div>
   </div>
@@ -357,9 +364,63 @@ $("iMin").value=Math.floor(S.total/60);$("iSeg").value=S.total%60;
 $("iRot").value=S.rot||"";$("kSom").checked=S.som;$("sTom").value=S.tom;$("sAv").value=S.tomAv||"toque";
 $("rVol").value=Math.round(S.vol*100);$("kAv").checked=S.av;$("kExtra").checked=S.extra;
 
+/* ---------- digitar o tempo no próprio visor ---------- */
+var edOn=false,edIni="",edRun=false;
+function edLargura(){var e=$("eMin");e.style.width=(Math.max(2,e.value.length)+.3)+"ch"}
+function abreEd(tecla){
+  if(edOn)return;
+  var ms=resto(),s=ms>0?Math.ceil(ms/1000):S.total;
+  var m=Math.min(999,Math.floor(s/60));
+  $("eMin").value=pad(m);$("eSeg").value=pad(s-m*60>59?59:s-m*60);
+  edIni=$("eMin").value+":"+$("eSeg").value;edRun=S.run;edOn=true;
+  dig.hidden=true;$("ed").hidden=false;
+  if(tecla!==undefined){$("eMin").value=tecla;$("eSeg").value="00";edIni=""}
+  edLargura();
+  var f=$("eMin");f.focus();
+  if(tecla===undefined)f.select();else{try{f.setSelectionRange(1,1)}catch(e){}}
+}
+function fechaEd(confirma){
+  if(!edOn)return;
+  edOn=false;
+  try{[$("eMin"),$("eSeg")].forEach(function(x){if(x.ownerDocument.activeElement===x)x.blur()})}catch(e){}
+  $("ed").hidden=true;dig.hidden=false;
+  if(confirma&&$("eMin").value+":"+$("eSeg").value!==edIni){
+    var m=parseInt($("eMin").value||"0",10)||0,s=parseInt($("eSeg").value||"0",10)||0;
+    var tot=Math.min(999*60+59,m*60+s);
+    if(tot>=1){
+      defineDuracao(tot);
+      document.querySelectorAll(".chip.sel").forEach(function(x){x.classList.remove("sel")});
+      if(edRun)inicia();
+    }
+  }
+  render();
+}
+dig.onclick=function(){abreEd()};
+["eMin","eSeg"].forEach(function(id){
+  var el=$(id);
+  el.oninput=function(){
+    var v=el.value;
+    if(id==="eMin"&&/[:.,;\s]/.test(v)){el.value=v.replace(/\D/g,"");edLargura();$("eSeg").focus();$("eSeg").select();return}
+    el.value=v.replace(/\D/g,"");
+    if(id==="eMin")edLargura();
+  };
+  el.onkeydown=function(e){
+    if(e.key==="Enter"){e.preventDefault();fechaEd(true)}
+    else if(e.key==="Escape"){e.preventDefault();fechaEd(false)}
+    else if(id==="eSeg"&&e.key==="Backspace"&&el.value===""){e.preventDefault();$("eMin").focus()}
+  };
+  el.onfocus=function(){try{el.select()}catch(e){}};
+});
+$("ed").addEventListener("focusout",function(e){
+  if(!edOn)return;
+  var r=e.relatedTarget;
+  if(r!==$("eMin")&&r!==$("eSeg"))fechaEd(true);
+});
+
 function atalho(e){
   var t=e.target&&e.target.tagName;
   if(t==="INPUT"||t==="SELECT")return;
+  if(/^[0-9]$/.test(e.key)&&!e.ctrlKey&&!e.metaKey&&!e.altKey){if(!S.run&&$("aj").hidden){e.preventDefault();abreEd(e.key)}return}
   if(e.code==="Space"){e.preventDefault();$("bGo").click()}
   else if(e.key==="r"||e.key==="R"){reinicia()}
   else if(e.key==="ArrowUp"){e.preventDefault();ajusta(60)}
