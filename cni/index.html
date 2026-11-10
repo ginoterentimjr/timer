@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ficha do caso · Workshop Gestão Ágil · CNI</title>
+<meta name="description" content="Ficha do caso do Dia 2 do Workshop Gestão Ágil da CNI: o desafio, o caso, as seis ideias e os dados para a RICE.">
+<meta name="theme-color" content="#F6F2EC">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F2EC; --card:#FFFDF9; --ink:#2A211C; --body:#5A4F48; --rule:#E4DCD2;
+    --orange:#E5662C; --ochre:#B5781E; --dark:#1B1512;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:Poppins,system-ui,sans-serif;font-size:17px;line-height:1.55}
+  .wrap{max-width:860px;margin:0 auto;padding:0 16px}
+  header.top{background:var(--dark);color:#fff;padding:18px 0 22px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{width:58px;height:auto}
+  .brand b{display:block;font-size:15px;letter-spacing:.08em}
+  .brand span{display:block;font-size:12px;letter-spacing:.22em;color:#CBBFB3}
+  .evento{margin-top:14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);font-weight:600}
+  .evento small{display:block;color:#CBBFB3;letter-spacing:.12em;font-weight:500;margin-top:2px}
+  .hero{padding:26px 0 8px}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ochre)}
+  h1{font-size:clamp(28px,7vw,42px);line-height:1.12;margin:6px 0 10px;font-weight:700}
+  h1 em{font-style:normal;color:var(--orange)}
+  .lede{color:var(--body);margin:0 0 16px;font-size:16px}
+  .baixar{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 8px}
+  .btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;font-size:16px;border-radius:12px;padding:13px 18px;min-height:48px}
+  .btn.pri{background:var(--orange);color:#fff}
+  .btn.sec{background:var(--card);color:var(--ink);border:1.5px solid var(--rule)}
+  .btn svg{width:20px;height:20px;flex:none}
+  nav.abas{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--rule);margin-top:14px}
+  nav.abas .wrap{display:flex;gap:6px;padding-top:8px;padding-bottom:8px}
+  nav.abas a{flex:1;text-align:center;text-decoration:none;color:var(--ink);font-weight:600;font-size:15px;padding:10px 8px;border-radius:10px;background:var(--card);border:1px solid var(--rule)}
+  section{padding:22px 0 6px;scroll-margin-top:66px}
+  h2{font-size:22px;line-height:1.25;margin:0 0 14px}
+  h2 em{font-style:normal;color:var(--orange)}
+  .card{background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--t,var(--orange));border-radius:12px;padding:14px 16px;margin:0 0 12px}
+  .lab{display:block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t,var(--orange));margin-bottom:4px}
+  .desafio{font-size:19px;font-weight:700;line-height:1.38;margin:0}
+  .card p{margin:0}
+  .narr p{margin:0 0 14px}
+  .marca{background:#F3E6D6;border-radius:12px;padding:12px 16px;font-size:16px;margin:4px 0 8px}
+  .marca b{color:var(--ink)}
+  .tdg{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--ochre);color:#fff;font-weight:700;font-size:14px;margin:0 4px 0 2px;vertical-align:-3px}
+  .ideias{display:grid;gap:12px;margin:0 0 12px}
+  .ideia{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:44px 1fr;gap:4px 12px}
+  .ideia .k{grid-row:span 3;width:44px;height:44px;border-radius:50%;background:var(--orange);color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center}
+  .ideia h3{margin:0;font-size:17px;line-height:1.35}
+  .nums{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+  .num{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:4px 10px;font-size:14px;color:var(--body)}
+  .num b{color:var(--ink);font-size:16px}
+  .sabe{font-size:15px;color:var(--body)}
+  .escalas{display:grid;gap:8px}
+  .esc{display:flex;flex-wrap:wrap;gap:6px}
+  .esc span{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:3px 10px;font-size:15px}
+  footer{margin-top:26px;padding:22px 0 34px;border-top:1px solid var(--rule);color:var(--body);font-size:14px}
+  footer .baixar{margin-top:12px}
+  @media (min-width:720px){
+    .ideias{grid-template-columns:1fr 1fr}
+    .escalas{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><img src="marca.png" alt=""><div><b>GINO TERENTIM</b><span>RETHINKING LEARNING</span></div></div>
+    <div class="evento">Workshop Gestão Ágil · CNI<small>Dia 2 · 10 de novembro de 2026</small></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="eyebrow">10 · Ficha do caso</div>
+    <h1>O monitoramento <em>que as áreas usam.</em></h1>
+    <p class="lede">Caso fictício, construído com temas que as duas turmas trouxeram no Dia 1.</p>
+    <div class="baixar">
+      <a class="btn pri" href="Ficha_do_Caso_CNI_Gestao_Agil_A4.pdf" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        Baixar o PDF (A4)</a>
+      <a class="btn sec" href="Ficha_do_Caso_CNI_Gestao_Agil_A3.pdf" download>Versão A3, para imprimir</a>
+    </div>
+  </div>
+</main>
+
+<nav class="abas" aria-label="Seções da ficha"><div class="wrap"><a href="#frente">Frente: o caso</a><a href="#verso">Verso: as ideias</a></div></nav>
+
+<main class="wrap">
+  <section id="frente">
+    <h2>Frente · <em>o desafio e o caso</em></h2>
+    <div class="card" style="--t:var(--orange)"><span class="lab">O desafio</span>
+      <p class="desafio">“Como podemos construir um monitoramento de projetos que as áreas realmente usem para decidir?”</p></div>
+    <div class="card" style="--t:var(--ochre)"><span class="lab">Quem recebe · Cliente da Entrega</span>
+      <p>Os gestores das 12 áreas, que conduzem os projetos e decidem prioridades na reunião mensal.</p></div>
+    <div class="marca">Ao ler, identifique: <span class="tdg">T</span><b>tarefa</b>, o que a gestora faz · <span class="tdg">D</span><b>dor</b>, o que atrapalha · <span class="tdg">G</span><b>ganho</b>, o que ela espera.</div>
+    <div class="narr">
+      <span class="lab" style="color:var(--ochre);margin:12px 0 8px">O caso</span>
+      <p>A diretoria nacional de uma organização de serviços acompanha cerca de 200 projetos, conduzidos por 12 áreas e cerca de 40 gestores. Desde o início do ano, há um painel digital e uma ferramenta de registro de tarefas. Ainda assim, a informação segue espalhada em dez ferramentas, e boa parte das equipes mantém planilhas próprias.</p>
+      <p>Na última semana de cada mês, a gestora de uma das áreas prepara a reunião em que a diretoria decide as prioridades. Ela precisa mostrar em que ponto estão os seus projetos e defender o que deve vir primeiro. Para isso, passa cerca de dois dias reunindo números de várias ferramentas, planilha por planilha. Quando a reunião começa, os números do painel e os das planilhas nem sempre coincidem, e a primeira meia hora é dedicada a descobrir qual está certo.</p>
+      <p>A equipe dela registra as tarefas na ferramenta, mas não vê esse registro usado em nenhuma decisão; aos poucos, o registro fica para depois. A cada quinze dias, a área se reúne para acompanhar os projetos, quase sempre a partir das planilhas.</p>
+      <p>O que a gestora mais quer é saber, sem pedir a ninguém, quais projetos estão atrasados ou em risco, e chegar à reunião segura dos próprios números, vista pela diretoria como quem tem os projetos sob controle. A diretoria, por sua vez, quer terminar a reunião com as prioridades decididas, a partir de números que todos aceitem.</p>
+      <p>Há sinais de caminho. Duas áreas passaram a usar só o painel há três meses e dizem gastar menos tempo para preparar a reunião. E outras diretorias da organização já adotam um modelo único de relatório mensal.</p>
+    </div>
+  </section>
+
+  <section id="verso">
+    <h2>Verso · <em>seis ideias e os dados para a RICE</em></h2>
+    <p class="lede">Alcance e esforço vêm da ficha; <b>Impacto</b> e <b>Confiança</b> são decisão do grupo.</p>
+    <div class="card" style="--t:var(--orange)"><span class="lab">Capacidade do trimestre</span>
+      <p>A equipe de dados tem 3 pessoas, por 3 meses: <b>9 pessoas-mês</b>. Esforço em pessoas-mês.</p></div>
+    <div class="ideias">
+      <article class="ideia"><span class="k">A</span><h3>Modelo único de relatório mensal, gerado do painel</h3>
+        <div class="nums"><span class="num">Alcance <b>12</b> áreas</span><span class="num">Esforço <b>1</b> pessoa-mês</span></div>
+        <div class="sabe">Outras diretorias já usam (frente).</div></article>
+      <article class="ideia"><span class="k">B</span><h3>Integração das dez ferramentas num só painel</h3>
+        <div class="nums"><span class="num">Alcance <b>12</b> áreas</span><span class="num">Esforço <b>9</b> pessoas-mês</span></div>
+        <div class="sabe">Nenhum teste; ocupa o trimestre inteiro.</div></article>
+      <article class="ideia"><span class="k">C</span><h3>Reunião de acompanhamento que trata só dos projetos registrados na ferramenta</h3>
+        <div class="nums"><span class="num">Alcance <b>12</b> áreas</span><span class="num">Esforço <b>0,5</b> pessoa-mês</span></div>
+        <div class="sabe">Nenhum teste; ideia da diretoria.</div></article>
+      <article class="ideia"><span class="k">D</span><h3>Alerta automático de atraso e risco para cada gestor</h3>
+        <div class="nums"><span class="num">Alcance <b>12</b> áreas</span><span class="num">Esforço <b>3</b> pessoas-mês</span></div>
+        <div class="sabe">É o que a gestora mais quer (frente).</div></article>
+      <article class="ideia"><span class="k">E</span><h3>Duas áreas-piloto decidem só pelo painel e mostram às demais</h3>
+        <div class="nums"><span class="num">Alcance <b>2</b> áreas</span><span class="num">Esforço <b>1</b> pessoa-mês</span></div>
+        <div class="sabe">Duas áreas já fazem isso (frente).</div></article>
+      <article class="ideia"><span class="k">F</span><h3>Treinamento da ferramenta para todas as equipes</h3>
+        <div class="nums"><span class="num">Alcance <b>12</b> áreas</span><span class="num">Esforço <b>2</b> pessoas-mês</span></div>
+        <div class="sabe">O treinamento do ano passado não mudou o uso.</div></article>
+    </div>
+    <div class="card" style="--t:var(--orange)"><span class="lab">A demanda nova</span>
+      <p>No meio do trimestre, a presidência pede um relatório de indicadores dos projetos para o conselho, em seis semanas. Alcance: 12 áreas, porque todas fornecem dados. Esforço: 2 pessoas-mês. O que já se sabe: o pedido é formal e tem data.</p></div>
+    <div class="card" style="--t:var(--ochre)"><span class="lab">As escalas · apostila, p. 15</span>
+      <div class="escalas">
+        <div><b>Impacto</b><div class="esc"><span>3 massivo</span><span>2 alto</span><span>1 médio</span><span>0,5 baixo</span><span>0,25 mínimo</span></div></div>
+        <div><b>Confiança</b><div class="esc"><span>100% alta</span><span>80% média</span><span>50% baixa</span></div></div>
+      </div></div>
+  </section>
+
+  <footer>
+    Workshop Gestão Ágil · CNI · Gino Terentim · Rethinking Learning
+    <div class="baixar"><a class="btn pri" href="Ficha_do_Caso_CNI_Gestao_Agil_A4.pdf" download>Baixar o PDF (A4)</a></div>
+  </footer>
+</main>
+</body>
+</html>
